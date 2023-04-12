@@ -12,14 +12,34 @@
 
   try {
     $dbh = dblogin();
-    $sql = "SELECT todos.id, owner, users.userid, todo, c_date, due_date, done, org_filename, real_filename, public FROM todos INNER JOIN users ON users.id=todos.owner AND (todos.owner=$reqid OR ?) AND (todos.owner = ? OR todos.public > 0 OR ? > 0)";
-    if (! empty($key) && $like_search) {
-      $sql .= " AND todo LIKE '%$key%'";
-    } elseif (! empty($key)) {
-      $sql .= " AND todo = '$key'";
-    }
+    $sql = <<<SQL
+SELECT
+    todos.id,
+    owner,
+    users.userid,
+    todo,
+    c_date,
+    due_date,
+    done,
+    org_filename,
+    real_filename,
+    public
+FROM
+    todos
+    INNER JOIN users
+        ON users.id = todos.owner
+        AND (todos.owner = ? OR ?)
+        AND (todos.owner = ? OR todos.public > 0 OR ? > 0)
+        AND (
+            ?
+            OR CASE
+                WHEN ? THEN todo LIKE concat('%', ?, '%')
+                ELSE todo = ?
+               END
+        )
+SQL;
     $sth = $dbh->prepare($sql);
-    $sth->execute(array($reqid < 0, $id, $app->is_super()));
+    $sth->execute(array($reqid, $reqid < 0, $id, $app->is_super(), !$key, $like_search, $key, $key));
     $rows = $sth->fetchAll();
   } catch (PDOException $e) {
     $app->addlog('クエリに失敗しました: ' . $e->getMessage());
