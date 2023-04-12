@@ -16,6 +16,12 @@
       $pwd   = $result['pwd'];
       $icon  = $result['icon'];
       $super = $result['super'];
+      $login_user = $app->get_userid();
+      if($login_user == $userid) {
+        $ok = true;
+      }else{
+        $ok = false;
+      }
     }
   } catch (PDOException $e) {
     $app->addlog('クエリに失敗しました: ' . $e->getMessage());
