@@ -51,7 +51,7 @@ try {
   $stmt->execute();
   $rows = $stmt->fetchAll();
 } catch (PDOException $e) {
-  $app->addlog('クエリに失敗しました');
+  $app->addlog('クエリに失敗しました: ' . $e->getMessage());
   $errmsg[] = "検索時にエラーが発生しました";
 }
 ?><html>
