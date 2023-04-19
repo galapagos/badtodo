@@ -44,7 +44,7 @@
         $columns[] = 'pwd=?';
         $values[] = mb_substr($pwd, 0, 6);
       }
-      if ($super != $row['super']) {
+      if ($app->is_super() && $super != $row['super']) {
         $columns[] = 'super=?';
         $values[] = $super;
       }
