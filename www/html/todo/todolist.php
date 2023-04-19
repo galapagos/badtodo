@@ -27,20 +27,21 @@ try {
       WHERE
         1 = 1
         AND (todos.owner=:reqid OR :reqid)
-        AND (todos.owner =:reqid OR todos.public > 0 OR :public > 0)";
+        AND (todos.owner =:reqid OR todos.public > 0 OR :public > 0)
+        AND (
+          :key IS NULL
+          OR CASE
+              WHEN :like_search THEN todo LIKE concat('%', :key, '%')
+              ELSE todo = :key
+            END
+        )";
 
   $params = array(
     ':reqid' => $reqid,
-    ':public' => $app->is_super()
+    ':public' => $app->is_super(),
+    ':key' => $key,
+    ':like_search' => $like_search
   );
-
-  if (!empty($key) && $like_search) {
-    $sql .= " AND todo LIKE :key";
-    $params[':key'] = "%{$key}%";
-  } elseif (!empty($key)) {
-    $sql .= " AND todo = :key";
-    $params[':key'] = $key;
-  }
 
   $stmt = $dbh->prepare($sql);
 
