@@ -25,9 +25,19 @@ function import_todo($app, $ownerid, $todolist) {
       $c_date = empty($c_date) ? 'NULL' : "'{$c_date}'";
       $due_date = empty($due_date) ? 'NULL' : "'{$due_date}'";
       $maxid++;
-      $sql = "INSERT INTO todos (id, owner, todo, c_date, due_date, done, memo, url, url_text, public) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      $sql = "INSERT INTO todos (id, owner, todo, c_date, due_date, done, memo, url, url_text, public) VALUES(:id, :owner, :todo, :c_date, :due_date, :done, :memo, :url, :url_text, :public)";
       $sth = $dbh->prepare($sql);
-      $sth->execute(array($maxid, $ownerid, $subject, $c_date, $due_date, $done, $memo, $url, $url_text, $public));
+      $sth->bindParam(':id', $maxid, PDO::PARAM_INT);
+      $sth->bindParam(':owner', $ownerid, PDO::PARAM_INT);
+      $sth->bindParam(':todo', $subject, PDO::PARAM_STR);
+      $sth->bindParam(':c_date', $c_date, PDO::PARAM_STR);
+      $sth->bindParam(':due_date', $due_date, PDO::PARAM_STR);
+      $sth->bindParam(':done', $done, PDO::PARAM_INT);
+      $sth->bindParam(':memo', $memo, PDO::PARAM_STR);
+      $sth->bindParam(':url', $url, PDO::PARAM_STR);
+      $sth->bindParam(':url_text', $url_text, PDO::PARAM_STR);
+      $sth->bindParam(':public', $public, PDO::PARAM_INT);
+      $sth->execute();
     }
     $dbh->commit();
   } catch (PDOException $e) {
