@@ -25,8 +25,9 @@ function import_todo($app, $ownerid, $todolist) {
       $c_date = empty($c_date) ? 'NULL' : "'{$c_date}'";
       $due_date = empty($due_date) ? 'NULL' : "'{$due_date}'";
       $maxid++;
-      $sql = "INSERT INTO todos (id, owner, todo, c_date, due_date, done, memo, url, url_text, public) VALUES($maxid, $ownerid, '$subject', $c_date, $due_date, $done, '$memo', '$url', '$url_text', $public)";
-      $dbh->query($sql);    
+      $sql = "INSERT INTO todos (id, owner, todo, c_date, due_date, done, memo, url, url_text, public) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      $sth = $dbh->prepare($sql);
+      $sth->execute(array($maxid, $ownerid, $subject, $c_date, $due_date, $done, $memo, $url, $url_text, $public));
     }
     $dbh->commit();
   } catch (PDOException $e) {
