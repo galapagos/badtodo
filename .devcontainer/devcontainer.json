@@ -1,0 +1,21 @@
+{
+	"name": "Ubuntu",
+	"image": "mcr.microsoft.com/devcontainers/base:jammy",
+	"features": {
+		"ghcr.io/devcontainers/features/php:1": {},
+		"docker-from-docker": {
+			"version": "latest"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode-remote.vscode-remote-extensionpack",
+				"ms-azuretools.vscode-docker",
+				"GitHub.copilot",
+				"adpyke.vscode-sql-formatter",
+				"GitHub.copilot-labs"
+			]
+		}
+	}
+}
